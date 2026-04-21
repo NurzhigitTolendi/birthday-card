@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Тебе письмо! ✨</title>
+    <link href="https://fonts.googleapis.com/css2?family=Bad+Script&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #fce4ec;
+            --env-color: #f06292;
+            --env-dark: #d81b60;
+            --env-front: #f48fb1;
+            --paper-color: #ffffff;
+            --heart-color: #ff4081;
+        }
+
+        * { cursor: none !important; -webkit-tap-highlight-color: transparent; }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: var(--bg-color);
+            font-family: 'Bad Script', cursive;
+            overflow: hidden;
+            touch-action: none;
+        }
+
+        #magic-wand {
+            position: fixed; top: 0; left: 0; font-size: 30px;
+            pointer-events: none; z-index: 9999; transform: translate(-20%, -20%);
+        }
+
+        .wrapper {
+            position: relative;
+            width: 400px;
+            height: 280px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            perspective: 1500px;
+            z-index: 10;
+        }
+
+        /* --- ФОН --- */
+        #bubbles-container {
+            position: absolute; width: 100%; height: 100%;
+            top: 0; left: 0; z-index: 1; pointer-events: none;
+        }
+        .bubble {
+            position: absolute; bottom: -50px; opacity: 0.6;
+            animation: bubbleRise linear infinite;
+        }
+        @keyframes bubbleRise {
+            0% { transform: translateY(0) rotate(0deg); opacity: 0.6; }
+            100% { transform: translateY(-110vh) rotate(360deg); opacity: 0; }
+        }
+
+        /* --- ИСПРАВЛЕННЫЙ КОНВЕРТ --- */
+        .envelope-box {
+            position: absolute; width: 100%; height: 100%; z-index: 10;
+            transition: transform 1s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.5s;
+            transform-style: preserve-3d;
+        }
+        .env-back {
+            position: absolute; width: 100%; height: 100%;
+            background-color: var(--env-color); border-radius: 0 0 10px 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        
+        /* Клапаны теперь на фиксированных px */
+        .env-front-claims { position: absolute; width: 100%; height: 100%; z-index: 12; }
+        .env-front-claims::before {
+            content: ''; position: absolute; 
+            border-left: 200px solid transparent; border-right: 200px solid transparent;
+            border-bottom: 150px solid var(--env-front); bottom: 0; left: 0;
+        }
+        .env-front-claims::after {
+            content: ''; position: absolute; 
+            border-top: 140px solid transparent; border-left: 200px solid var(--env-color);
+            border-right: 200px solid var(--env-color); border-bottom: 140px solid transparent;
+            bottom: 0; left: 0;
+        }
+
+        .flap {
+            position: absolute; top: 0; left: 0;
+            border-left: 200px solid transparent; border-right: 200px solid transparent;
+            border-top: 150px solid var(--env-dark);
+            transform-origin: top; transition: transform 0.4s ease-in-out; z-index: 13;
+        }
+
+        /* --- ПИСЬМО --- */
+        .letter {
+            position: absolute; width: 360px; height: 250px;
+            background: var(--paper-color); padding: 25px; box-sizing: border-box;
+            border-radius: 5px; box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            z-index: 5; top: 10px; text-align: center; overflow-y: auto;
+            transition: all 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .heart-svg {
+            position: absolute; width: 350px; height: 350px; top: -180px;
+            opacity: 0; transition: opacity 0.6s ease-out; z-index: 2;
+        }
+        .heart-left { left: -280px; transform: rotate(-15deg); }
+        .heart-right { right: -280px; transform: rotate(15deg); }
+
+        /* ОТКРЫТО */
+        .wrapper.open .flap { transform: rotateX(180deg); }
+        .wrapper.open .envelope-box { transform: translateY(120vh); opacity: 0; }
+        .wrapper.open .letter { top: -240px; height: 450px; z-index: 20; transition-delay: 0.2s; }
+        .wrapper.open .heart-svg { opacity: 1; transition-delay: 0.6s; }
+
+        .letter h2 { color: #ad1457; margin-bottom: 10px; font-size: 1.5em; opacity: 0; }
+        .letter p { font-size: 1.1em; line-height: 1.5; color: #333; margin: 5px 0; opacity: 0; }
+
+        .sparkle { position: fixed; pointer-events: none; z-index: 9998; animation: sparkle-fade 1s forwards; font-size: 15px; }
+        @keyframes sparkle-fade { 0% { opacity: 1; transform: scale(1); } 100% { opacity: 0; transform: translate(var(--x), var(--y)) scale(0); } }
+
+        /* Адаптация для мелких экранов */
+        @media (max-width: 420px) {
+            .wrapper { width: 320px; }
+            .env-front-claims::before { border-left: 160px solid transparent; border-right: 160px solid transparent; }
+            .env-front-claims::after { border-left: 160px solid var(--env-color); border-right: 160px solid var(--env-color); }
+            .flap { border-left: 160px solid transparent; border-right: 160px solid transparent; }
+            .letter { width: 300px; }
+        }
+    </style>
+</head>
+<body onload="init()">
+
+    <div id="magic-wand">🪄</div>
+    <div id="bubbles-container"></div>
+
+    <div class="wrapper" id="card" onclick="toggleEnvelope()">
+        <div class="instruction">Нажми на конверт 💌</div>
+        
+        <svg class="heart-svg heart-left" viewBox="0 0 24 24" fill="#ff4081"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+        <svg class="heart-svg heart-right" viewBox="0 0 24 24" fill="#ff4081"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+
+        <div class="letter">
+            <h2 id="type-h2">С Днем Рождения! 🎉</h2>
+            <div id="type-p-container">
+                </div>
+        </div>
+
+        <div class="envelope-box">
+            <div class="flap"></div>
+            <div class="env-front-claims"></div>
+            <div class="env-back"></div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <script>
+        let isSnowing = false;
+        // Текст поздравления (разбитый на строки для четкой очереди)
+        const greetingTitle = "С Днем Рождения! 🎉";
+        const greetingLines = [
+            "Дорогая подруга!",
+            "Сегодня весь мир кружится вокруг тебя.",
+            "Пусть каждый твой день будет полон магии,",
+            "как этот конверт, и тепла, как эти искры.",
+            "Будь самой счастливой! ✨🎂🎁"
+        ];
+
+        function init() {
+            createBubbles();
+            initMagicWand();
+            initGyro();
+        }
+
+        function initGyro() {
+            if (window.DeviceOrientationEvent) {
+                window.addEventListener('deviceorientation', (e) => {
+                    const x = (e.gamma || 0) / 10;
+                    document.querySelectorAll('.bubble').forEach(b => {
+                        b.style.transform = `translateX(${x * 3}px)`;
+                    });
+                });
+            }
+        }
+
+        function initMagicWand() {
+            const wand = document.getElementById('magic-wand');
+            const updateWand = (x, y) => {
+                wand.style.left = x + 'px';
+                wand.style.top = y + 'px';
+                createSparkle(x, y);
+            };
+            document.addEventListener('mousemove', e => updateWand(e.clientX, e.clientY));
+            document.addEventListener('touchmove', e => updateWand(e.touches[0].clientX, e.touches[0].clientY));
+        }
+
+        function createSparkle(x, y) {
+            const s = document.createElement('div');
+            s.className = 'sparkle'; s.textContent = '✨';
+            s.style.left = x + 'px'; s.style.top = y + 'px';
+            s.style.setProperty('--x', (Math.random()-0.5)*60+'px');
+            s.style.setProperty('--y', (Math.random()-0.5)*60+'px');
+            document.body.appendChild(s);
+            setTimeout(() => s.remove(), 1000);
+        }
+
+        // ПЕЧАТНАЯ МАШИНКА 2.0 (Исправленная очередь)
+        async function runTypewriter() {
+            const h2 = document.getElementById('type-h2');
+            const pContainer = document.getElementById('type-p-container');
+            
+            h2.innerHTML = ""; h2.style.opacity = "1";
+            pContainer.innerHTML = "";
+
+            // 1. Печатаем заголовок
+            await typeEffect(h2, greetingTitle, 80);
+
+            // 2. Печатаем строки по очереди
+            for (let line of greetingLines) {
+                const p = document.createElement('p');
+                p.style.opacity = "1";
+                pContainer.appendChild(p);
+                await typeEffect(p, line, 40);
+            }
+        }
+
+        function typeEffect(element, text, speed) {
+            return new Promise(resolve => {
+                let i = 0;
+                function type() {
+                    if (i < text.length) {
+                        element.innerHTML += text.charAt(i);
+                        i++;
+                        setTimeout(type, speed);
+                    } else {
+                        resolve();
+                    }
+                }
+                type();
+            });
+        }
+
+        function startSnow() {
+            if (isSnowing) return;
+            isSnowing = true;
+            (function frame() {
+                if (!isSnowing) return;
+                confetti({
+                    particleCount: 1, startVelocity: 0, ticks: 200,
+                    origin: { x: Math.random(), y: -0.1 },
+                    colors: ['#ffd700', '#ff4081', '#ffffff'],
+                    gravity: 0.6, scalar: 0.8, drift: Math.random() - 0.5
+                });
+                requestAnimationFrame(frame);
+            }());
+        }
+
+        function toggleEnvelope() {
+            const card = document.getElementById('card');
+            card.classList.toggle('open');
+            if (card.classList.contains('open')) {
+                setTimeout(runTypewriter, 1000);
+                setTimeout(() => {
+                    confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
+                    startSnow();
+                }, 1200);
+            } else {
+                isSnowing = false;
+                document.getElementById('type-h2').style.opacity = "0";
+                document.getElementById('type-p-container').innerHTML = "";
+            }
+        }
+
+        function createBubbles() {
+            const container = document.getElementById('bubbles-container');
+            const em = ['💖', '⭐', '✨', '🌸'];
+            for (let i = 0; i < 15; i++) {
+                const b = document.createElement('div');
+                b.className = 'bubble'; b.textContent = em[Math.floor(Math.random()*em.length)];
+                b.style.left = Math.random()*100+'vw'; b.style.fontSize = '20px';
+                b.style.animationDuration = Math.random()*5+7+'s';
+                container.appendChild(b);
+            }
+        }
+    </script>
+</body>
+</html>
