@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Тебе письмо! ✨</title>
     <link href="https://fonts.googleapis.com/css2?family=Bad+Script&display=swap" rel="stylesheet">
     <style>
@@ -15,6 +15,7 @@
             --heart-color: #ff4081;
         }
 
+        /* Убираем стандартный курсор, но разрешаем зум */
         * { cursor: none !important; -webkit-tap-highlight-color: transparent; }
 
         body {
@@ -26,7 +27,8 @@
             background-color: var(--bg-color);
             font-family: 'Bad Script', cursive;
             overflow: hidden;
-            touch-action: none;
+            /* Разрешаем стандартные жесты браузера (зум и скролл) */
+            touch-action: manipulation;
         }
 
         #magic-wand {
@@ -34,28 +36,25 @@
             pointer-events: none; z-index: 9999; transform: translate(-20%, -20%);
         }
 
-        /* Адаптивная обертка */
+        /* Контейнер проекта */
         .wrapper {
             position: relative;
-            width: 360px;
-            height: 250px;
+            width: 320px;
+            height: 220px;
             display: flex;
             justify-content: center;
             align-items: center;
             perspective: 1500px;
             z-index: 10;
-            /* Сдвигаем чуть ниже в спокойном состоянии */
-            transform: translateY(50px);
+            transform: translateY(60px);
             transition: transform 0.8s ease-in-out;
         }
 
-        /* При открытии опускаем всю конструкцию ЕЩЕ ниже на мобилках */
-        .wrapper.open {
-            transform: translateY(120px);
-        }
+        /* Опускаем чуть ниже при открытии на мобилках */
+        .wrapper.open { transform: translateY(140px); }
 
         @media (min-width: 600px) {
-            .wrapper { width: 400px; height: 280px; }
+            .wrapper { width: 400px; height: 280px; transform: translateY(50px); }
             .wrapper.open { transform: translateY(150px); }
         }
 
@@ -73,7 +72,7 @@
             100% { transform: translateY(-110vh) rotate(360deg); opacity: 0; }
         }
 
-        /* --- КОНВЕРТ --- */
+        /* --- ИСПРАВЛЕННЫЙ КОНВЕРТ --- */
         .envelope-box {
             position: absolute; width: 100%; height: 100%; z-index: 10;
             transition: transform 1s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.5s;
@@ -82,26 +81,27 @@
         .env-back {
             position: absolute; width: 100%; height: 100%;
             background-color: var(--env-color); border-radius: 0 0 10px 10px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
         }
         
         .env-front-claims { position: absolute; width: 100%; height: 100%; z-index: 12; }
+        
+        /* Клапаны: адаптация размеров */
         .env-front-claims::before {
             content: ''; position: absolute; width: 0; height: 0;
-            border-left: 180px solid transparent; border-right: 180px solid transparent;
-            border-bottom: 135px solid var(--env-front); bottom: 0; left: 0;
+            border-left: 160px solid transparent; border-right: 160px solid transparent;
+            border-bottom: 120px solid var(--env-front); bottom: 0; left: 0;
         }
         .env-front-claims::after {
             content: ''; position: absolute; 
-            border-top: 125px solid transparent; border-left: 180px solid var(--env-color);
-            border-right: 180px solid var(--env-color); border-bottom: 125px solid transparent;
+            border-top: 110px solid transparent; border-left: 160px solid var(--env-color);
+            border-right: 160px solid var(--env-color); border-bottom: 110px solid transparent;
             bottom: 0; left: 0;
         }
 
         .flap {
             position: absolute; top: 0; left: 0;
-            border-left: 180px solid transparent; border-right: 180px solid transparent;
-            border-top: 135px solid var(--env-dark);
+            border-left: 160px solid transparent; border-right: 160px solid transparent;
+            border-top: 120px solid var(--env-dark);
             transform-origin: top; transition: transform 0.4s ease-in-out; z-index: 13;
         }
 
@@ -113,33 +113,34 @@
 
         /* --- ПИСЬМО --- */
         .letter {
-            position: absolute; width: 90%; height: 230px;
+            position: absolute; width: 90%; height: 210px;
             background: var(--paper-color); padding: 20px; box-sizing: border-box;
             border-radius: 5px; box-shadow: 0 5px 15px rgba(0,0,0,0.1);
             z-index: 5; top: 10px; text-align: center; overflow-y: auto;
             transition: all 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
-        /* СЕРДЕЧКИ - Теперь адаптивные */
+        /* --- СЕРДЕЧКИ: ИСПРАВЛЕННОЕ ПОЗИЦИОНИРОВАНИЕ --- */
         .heart-svg {
-            position: absolute; width: 250px; height: 250px; top: -140px;
-            opacity: 0; transition: opacity 0.6s ease-out; z-index: 2;
+            position: absolute; width: 60vw; max-width: 300px; height: auto;
+            top: -120px; opacity: 0; transition: all 0.6s ease-out; z-index: 2;
         }
-        .heart-left { left: -180px; transform: rotate(-15deg); }
-        .heart-right { right: -180px; transform: rotate(15deg); }
+        /* На мобилках прижимаем вплотную */
+        .heart-left { left: -15vw; transform: rotate(-10deg) scale(0.8); }
+        .heart-right { right: -15vw; transform: rotate(10deg) scale(0.8); }
 
         @media (min-width: 600px) {
             .heart-svg { width: 350px; height: 350px; top: -180px; }
-            .heart-left { left: -280px; } .heart-right { right: -280px; }
+            .heart-left { left: -280px; transform: rotate(-15deg) scale(1); }
+            .heart-right { right: -280px; transform: rotate(15deg) scale(1); }
         }
 
-        /* ОТКРЫТО */
+        /* СОСТОЯНИЕ ОТКРЫТО */
         .wrapper.open .flap { transform: rotateX(180deg); }
         .wrapper.open .envelope-box { transform: translateY(120vh); opacity: 0; }
         
-        /* Письмо вылетает в центр, не впритык к верху */
         .wrapper.open .letter { 
-            top: -200px; 
+            top: -190px; 
             height: 380px; 
             z-index: 20; 
             transition-delay: 0.2s; 
@@ -149,7 +150,7 @@
             .wrapper.open .letter { top: -240px; height: 450px; }
         }
 
-        .wrapper.open .heart-svg { opacity: 1; transition-delay: 0.6s; }
+        .wrapper.open .heart-svg { opacity: 0.8; transition-delay: 0.6s; }
 
         .letter h2 { color: #ad1457; margin-bottom: 10px; font-size: 1.3em; opacity: 0; }
         .letter p { font-size: 1.1em; line-height: 1.4; color: #333; margin: 5px 0; opacity: 0; }
@@ -204,6 +205,10 @@
 
         function initGyro() {
             if (window.DeviceOrientationEvent) {
+                // Запрашиваем разрешение для iOS, если нужно
+                if (typeof DeviceOrientationEvent.requestPermission === 'function') {
+                    DeviceOrientationEvent.requestPermission();
+                }
                 window.addEventListener('deviceorientation', (e) => {
                     const x = (e.gamma || 0) / 15;
                     document.querySelectorAll('.bubble').forEach(b => {
