@@ -36,24 +36,22 @@
 
         .wrapper {
             position: relative;
-            /* УВЕЛИЧИЛИ ШИРИНУ КОНВЕРТА */
-            width: 350px; 
+            width: 360px; 
             height: 240px;
             display: flex;
             justify-content: center;
             align-items: center;
             perspective: 1500px;
             z-index: 10;
-            transform: translateY(80px);
+            transform: translateY(100px);
             transition: transform 0.8s ease-in-out;
         }
 
-        .wrapper.open { transform: translateY(180px); }
+        .wrapper.open { transform: translateY(220px); }
 
         @media (min-width: 600px) {
-            /* ШИРИНА НА ДЕСКТОПЕ */
-            .wrapper { width: 450px; height: 300px; transform: translateY(100px); }
-            .wrapper.open { transform: translateY(220px); }
+            .wrapper { width: 480px; height: 320px; transform: translateY(120px); }
+            .wrapper.open { transform: translateY(280px); }
         }
 
         #bubbles-container {
@@ -81,48 +79,60 @@
         
         .env-front-claims { position: absolute; width: 100%; height: 100%; z-index: 12; }
         
-        /* ПОДПРАВИЛИ РАЗМЕРЫ КЛАПАНОВ ПОД НОВУЮ ШИРИНУ */
         .env-front-claims::before {
             content: ''; position: absolute; width: 0; height: 0;
-            border-left: 175px solid transparent; border-right: 175px solid transparent;
-            border-bottom: 130px solid var(--env-front); bottom: 0; left: 0;
+            border-left: 180px solid transparent; border-right: 180px solid transparent;
+            border-bottom: 140px solid var(--env-front); bottom: 0; left: 0;
         }
         .env-front-claims::after {
             content: ''; position: absolute; 
-            border-top: 120px solid transparent; border-left: 175px solid var(--env-color);
-            border-right: 175px solid var(--env-color); border-bottom: 120px solid transparent;
+            border-top: 130px solid transparent; border-left: 180px solid var(--env-color);
+            border-right: 180px solid var(--env-color); border-bottom: 130px solid transparent;
             bottom: 0; left: 0;
         }
 
         .flap {
             position: absolute; top: 0; left: 0;
-            border-left: 175px solid transparent; border-right: 175px solid transparent;
-            border-top: 130px solid var(--env-dark);
+            border-left: 180px solid transparent; border-right: 180px solid transparent;
+            border-top: 140px solid var(--env-dark);
             transform-origin: top; transition: transform 0.4s ease-in-out; z-index: 13;
         }
 
         @media (min-width: 600px) {
-            /* КЛАПАНЫ НА ДЕСКТОПЕ */
-            .env-front-claims::before { border-left: 225px solid transparent; border-right: 225px solid transparent; border-bottom: 160px solid var(--env-front); }
-            .env-front-claims::after { border-left: 225px solid var(--env-color); border-right: 225px solid var(--env-color); border-top: 150px solid transparent; border-bottom: 150px solid transparent; }
-            .flap { border-left: 225px solid transparent; border-right: 225px solid transparent; border-top: 160px solid var(--env-dark); }
+            .env-front-claims::before { border-left: 240px solid transparent; border-right: 240px solid transparent; border-bottom: 180px solid var(--env-front); }
+            .env-front-claims::after { border-left: 240px solid var(--env-color); border-right: 240px solid var(--env-color); border-top: 160px solid transparent; border-bottom: 160px solid transparent; }
+            .flap { border-left: 240px solid transparent; border-right: 240px solid transparent; border-top: 180px solid var(--env-dark); }
         }
 
-        /* --- ПИСЬМО (УВЕЛИЧИЛИ ШИРИНУ) --- */
+        /* --- ПИСЬМО --- */
         .letter {
             position: absolute; 
-            width: 92%; /* Почти вся ширина конверта */
-            height: 220px; 
+            width: 94%; 
+            height: 240px; 
             background: var(--paper-color); 
-            padding: 20px 15px; /* Уменьшили боковые падинги, чтобы текст был шире */
+            padding: 25px 20px;
             box-sizing: border-box;
             border-radius: 5px; 
             box-shadow: 0 5px 15px rgba(0,0,0,0.1);
             z-index: 5; 
             top: 10px; 
             text-align: center; 
-            overflow-y: hidden;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column; /* Вертикальный стек */
+            justify-content: flex-start;
             transition: all 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        /* Контейнер для основного поздравления */
+        #type-p-container {
+            flex-grow: 1; /* Занимает всё свободное место */
+        }
+
+        /* Контейнер для подписи внизу */
+        #signature-container {
+            margin-top: auto; /* Прижимает к низу */
+            padding-top: 15px;
         }
 
         .heart-svg {
@@ -133,39 +143,39 @@
         .heart-right { right: -15vw; transform: rotate(10deg) scale(0.8); }
 
         @media (min-width: 600px) {
-            .heart-svg { width: 350px; height: 350px; top: -180px; }
-            .heart-left { left: -280px; transform: rotate(-15deg) scale(1); }
-            .heart-right { right: -280px; transform: rotate(15deg) scale(1); }
+            .heart-svg { width: 380px; height: 380px; top: -200px; }
+            .heart-left { left: -320px; transform: rotate(-15deg) scale(1); }
+            .heart-right { right: -320px; transform: rotate(15deg) scale(1); }
         }
 
         .wrapper.open .flap { transform: rotateX(180deg); }
         .wrapper.open .envelope-box { transform: translateY(120vh); opacity: 0; }
         
         .wrapper.open .letter { 
-            top: -420px; 
-            height: 540px; /* Немного увеличили высоту, раз письмо стало шире */
+            top: -540px; 
+            height: 600px; 
             z-index: 20; 
             transition-delay: 0.2s; 
         }
 
         @media (max-width: 600px) {
             .wrapper.open .letter { 
-                top: -380px; 
-                height: 500px; 
-                width: 96%; /* На мобилках еще чуть шире */
+                top: -460px; 
+                height: 520px; 
+                width: 96%; 
             }
-            .letter p { font-size: 0.98em; } /* Шрифт почти стандартный */
+            .letter p { font-size: 0.98em; line-height: 1.35; }
         }
 
         .wrapper.open .heart-svg { opacity: 0.8; transition-delay: 0.6s; }
 
-        .letter h2 { color: #ad1457; margin-bottom: 10px; font-size: 1.25em; opacity: 0; }
+        .letter h2 { color: #ad1457; margin-bottom: 10px; font-size: 1.3em; opacity: 0; }
         .letter p { font-size: 1.05em; line-height: 1.4; color: #333; margin: 4px 0; opacity: 0; }
 
         .sparkle { position: fixed; pointer-events: none; z-index: 9998; animation: sparkle-fade 1s forwards; font-size: 15px; }
         @keyframes sparkle-fade { 0% { opacity: 1; transform: scale(1); } 100% { opacity: 0; transform: translate(var(--x), var(--y)) scale(0); } }
 
-        .instruction { position: absolute; top: -80px; width: 100%; text-align: center; color: #ad1457; font-weight: bold; font-size: 1.1em; z-index: 30; }
+        .instruction { position: absolute; top: -100px; width: 100%; text-align: center; color: #ad1457; font-weight: bold; font-size: 1.2em; z-index: 30; }
         .wrapper.open .instruction { opacity: 0; }
     </style>
 </head>
@@ -183,6 +193,7 @@
         <div class="letter">
             <h2 id="type-h2">С Днем Рождения! 🎉</h2>
             <div id="type-p-container"></div>
+            <div id="signature-container"></div>
         </div>
 
         <div class="envelope-box">
@@ -196,6 +207,8 @@
     <script>
         let isSnowing = false;
         const greetingTitle = "С Днем Рождения! 🎉🎉🎉";
+        
+        // Основной текст
         const greetingLines = [
             "Дорогая Раушан!",
             "Ты идешь своим прекрасным путем,",
@@ -205,9 +218,12 @@
             "радостные события, конечно же, крепкого здоровья,",
             "верных друзей рядом, большой любви, карьерного роста,",
             "роста зарплат, творческих успехов, новых идей,",
-            "больше уверенности и больше ярких моментов! ✨🎂🎁",  
-            "Очень рад, что наши судьбы пересеклись! ❤️❤️❤️", 
-            " ", 
+            "больше уверенности и больше ярких моментов! ✨🎂🎁",   
+            "Очень рад, что наши судьбы пересеклись! ❤️❤️❤️"
+        ];
+
+        // Подпись (выводится внизу)
+        const signatureLines = [
             "С любовью,", 
             "Нуржигит 🫶🏻🫶🏻🫶🏻"
         ];
@@ -258,13 +274,28 @@
         async function runTypewriter() {
             const h2 = document.getElementById('type-h2');
             const pContainer = document.getElementById('type-p-container');
+            const sigContainer = document.getElementById('signature-container');
+            
             h2.innerHTML = ""; h2.style.opacity = "1";
             pContainer.innerHTML = "";
+            sigContainer.innerHTML = "";
+
             await typeEffect(h2, greetingTitle, 60);
+
+            // Печатаем основной текст
             for (let line of greetingLines) {
                 const p = document.createElement('p');
                 p.style.opacity = "1";
                 pContainer.appendChild(p);
+                await typeEffect(p, line, 30);
+            }
+
+            // Печатаем подпись
+            for (let line of signatureLines) {
+                const p = document.createElement('p');
+                p.style.opacity = "1";
+                p.style.fontWeight = "bold"; // Сделаем подпись чуть заметнее
+                sigContainer.appendChild(p);
                 await typeEffect(p, line, 30);
             }
         }
@@ -311,6 +342,7 @@
                 isSnowing = false;
                 document.getElementById('type-h2').style.opacity = "0";
                 document.getElementById('type-p-container').innerHTML = "";
+                document.getElementById('signature-container').innerHTML = "";
             }
         }
 
