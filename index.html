@@ -47,11 +47,12 @@
             transition: transform 0.8s ease-in-out;
         }
 
-        .wrapper.open { transform: translateY(200px); } /* Опустили конверт ниже при открытии */
+        /* Опускаем конверт чуть ниже при открытии, чтобы дать место письму */
+        .wrapper.open { transform: translateY(220px); } 
 
         @media (min-width: 600px) {
             .wrapper { width: 480px; height: 320px; transform: translateY(120px); }
-            .wrapper.open { transform: translateY(280px); }
+            .wrapper.open { transform: translateY(300px); }
         }
 
         #bubbles-container {
@@ -123,7 +124,7 @@
         }
 
         #type-p-container { flex-grow: 1; }
-        #signature-container { margin-top: auto; padding-top: 10px; padding-bottom: 10px; }
+        #signature-container { margin-top: auto; padding-top: 10px; padding-bottom: 15px; }
 
         .heart-svg {
             position: absolute; width: 60vw; max-width: 300px; height: auto;
@@ -141,8 +142,9 @@
         .wrapper.open .flap { transform: rotateX(180deg); }
         .wrapper.open .envelope-box { transform: translateY(120vh); opacity: 0; }
         
+        /* ПИСЬМО: Теперь ближе к центру экрана */
         .wrapper.open .letter { 
-            top: -550px; 
+            top: -420px; /* Снизили высоту взлета для центровки */
             height: 640px; 
             z-index: 20; 
             transition-delay: 0.2s; 
@@ -150,10 +152,10 @@
 
         @media (max-width: 600px) {
             .wrapper.open .letter { 
-                top: -480px; /* Опустили письмо чуть ниже от верха телефона */
-                height: 580px; /* Высота под объем текста */
+                top: -380px; /* Идеальная высота для смартфонов */
+                height: 580px; 
                 width: 96%; 
-                padding-bottom: 30px; /* Запас снизу для подписи */
+                padding-bottom: 20px;
             }
             .letter p { font-size: 0.94em; line-height: 1.35; margin: 3px 0; }
             .letter h2 { font-size: 1.15em; margin-bottom: 5px; }
