@@ -15,7 +15,6 @@
             --heart-color: #ff4081;
         }
 
-        /* Убираем стандартный курсор, но разрешаем зум */
         * { cursor: none !important; -webkit-tap-highlight-color: transparent; }
 
         body {
@@ -27,7 +26,6 @@
             background-color: var(--bg-color);
             font-family: 'Bad Script', cursive;
             overflow: hidden;
-            /* Разрешаем стандартные жесты браузера (зум и скролл) */
             touch-action: manipulation;
         }
 
@@ -36,7 +34,6 @@
             pointer-events: none; z-index: 9999; transform: translate(-20%, -20%);
         }
 
-        /* Контейнер проекта */
         .wrapper {
             position: relative;
             width: 320px;
@@ -46,19 +43,17 @@
             align-items: center;
             perspective: 1500px;
             z-index: 10;
-            transform: translateY(60px);
+            transform: translateY(80px); /* Чуть ниже в покое */
             transition: transform 0.8s ease-in-out;
         }
 
-        /* Опускаем чуть ниже при открытии на мобилках */
-        .wrapper.open { transform: translateY(140px); }
+        .wrapper.open { transform: translateY(180px); } /* Сильнее вниз при открытии */
 
         @media (min-width: 600px) {
-            .wrapper { width: 400px; height: 280px; transform: translateY(50px); }
-            .wrapper.open { transform: translateY(150px); }
+            .wrapper { width: 400px; height: 280px; transform: translateY(100px); }
+            .wrapper.open { transform: translateY(220px); }
         }
 
-        /* --- ФОН --- */
         #bubbles-container {
             position: absolute; width: 100%; height: 100%;
             top: 0; left: 0; z-index: 1; pointer-events: none;
@@ -72,7 +67,6 @@
             100% { transform: translateY(-110vh) rotate(360deg); opacity: 0; }
         }
 
-        /* --- ИСПРАВЛЕННЫЙ КОНВЕРТ --- */
         .envelope-box {
             position: absolute; width: 100%; height: 100%; z-index: 10;
             transition: transform 1s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.5s;
@@ -84,8 +78,6 @@
         }
         
         .env-front-claims { position: absolute; width: 100%; height: 100%; z-index: 12; }
-        
-        /* Клапаны: адаптация размеров */
         .env-front-claims::before {
             content: ''; position: absolute; width: 0; height: 0;
             border-left: 160px solid transparent; border-right: 160px solid transparent;
@@ -111,21 +103,27 @@
             .flap { border-left: 200px solid transparent; border-right: 200px solid transparent; border-top: 150px solid var(--env-dark); }
         }
 
-        /* --- ПИСЬМО --- */
+        /* --- ПИСЬМО (Увеличили высоту) --- */
         .letter {
-            position: absolute; width: 90%; height: 210px;
-            background: var(--paper-color); padding: 20px; box-sizing: border-box;
-            border-radius: 5px; box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-            z-index: 5; top: 10px; text-align: center; overflow-y: auto;
+            position: absolute; 
+            width: 90%; 
+            height: 200px; /* Начальная высота */
+            background: var(--paper-color); 
+            padding: 20px; 
+            box-sizing: border-box;
+            border-radius: 5px; 
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            z-index: 5; 
+            top: 10px; 
+            text-align: center; 
+            overflow-y: hidden; /* Убрали ползунок */
             transition: all 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
-        /* --- СЕРДЕЧКИ: ИСПРАВЛЕННОЕ ПОЗИЦИОНИРОВАНИЕ --- */
         .heart-svg {
             position: absolute; width: 60vw; max-width: 300px; height: auto;
             top: -120px; opacity: 0; transition: all 0.6s ease-out; z-index: 2;
         }
-        /* На мобилках прижимаем вплотную */
         .heart-left { left: -15vw; transform: rotate(-10deg) scale(0.8); }
         .heart-right { right: -15vw; transform: rotate(10deg) scale(0.8); }
 
@@ -135,25 +133,30 @@
             .heart-right { right: -280px; transform: rotate(15deg) scale(1); }
         }
 
-        /* СОСТОЯНИЕ ОТКРЫТО */
         .wrapper.open .flap { transform: rotateX(180deg); }
         .wrapper.open .envelope-box { transform: translateY(120vh); opacity: 0; }
         
+        /* ПИСЬМО ВЫЛЕТАЕТ ВЫШЕ */
         .wrapper.open .letter { 
-            top: -190px; 
-            height: 380px; 
+            top: -420px; /* Вылетает выше, чтобы вместить текст */
+            height: 520px; /* Увеличили высоту самого листа */
             z-index: 20; 
             transition-delay: 0.2s; 
         }
 
-        @media (min-width: 600px) {
-            .wrapper.open .letter { top: -240px; height: 450px; }
+        @media (max-width: 600px) {
+            .wrapper.open .letter { 
+                top: -380px; 
+                height: 480px; 
+                width: 95%;
+            }
+            .letter p { font-size: 0.95em; } /* Чуть меньше шрифт на мобилках для вместимости */
         }
 
         .wrapper.open .heart-svg { opacity: 0.8; transition-delay: 0.6s; }
 
-        .letter h2 { color: #ad1457; margin-bottom: 10px; font-size: 1.3em; opacity: 0; }
-        .letter p { font-size: 1.1em; line-height: 1.4; color: #333; margin: 5px 0; opacity: 0; }
+        .letter h2 { color: #ad1457; margin-bottom: 10px; font-size: 1.2em; opacity: 0; }
+        .letter p { font-size: 1em; line-height: 1.4; color: #333; margin: 4px 0; opacity: 0; }
 
         .sparkle { position: fixed; pointer-events: none; z-index: 9998; animation: sparkle-fade 1s forwards; font-size: 15px; }
         @keyframes sparkle-fade { 0% { opacity: 1; transform: scale(1); } 100% { opacity: 0; transform: translate(var(--x), var(--y)) scale(0); } }
@@ -188,20 +191,21 @@
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <script>
         let isSnowing = false;
-        const greetingTitle = "С Днем Рождения! 🎉🎉🎉";
+        const greetingTitle = "С Днем Рождения, Раушан! 🎉";
         const greetingLines = [
-            "Дорогая Раушан!",
-            "Ты идешь своим прекрасным путем, и я искренне рад за то, чего ты уже достигла,",
-            "за каждую твою победу, за каждый твой новый проект.", 
-            "Желаю тебе чтобы на этом пути тебе попадались прекрасные люди,",
-            "радостные события, конечно же, крепкого здоровья,",
-            "верных друзей рядом, большой любви, карьерного роста,",
-            "роста зарплат, творческих успехов, новых идей,",
-            "больше уверенности и больше ярких моментов! ✨🎂🎁",  
-            "Очень рад, что наши судьбы пересеклись! ❤️❤️❤️", 
-            " ", 
-            "С любовью,", 
-            "Нуржигит 🫶🏻🫶🏻🫶🏻"
+            "Ты идешь своим прекрасным путем, и я искренне рад",
+            "всему, чего ты уже достигла. За каждую твою",
+            "победу и каждый твой новый проект!",
+            "Желаю, чтобы на этом пути тебе всегда",
+            "встречались только вдохновляющие люди,",
+            "радостные события и верные друзья.",
+            "Пусть здоровье будет крепким, а творческих",
+            "идей и энергии хватает на всё и сразу!",
+            "Карьерного взлета, роста во всём и побольше",
+            "уверенности — ты этого достойна! ✨🎂🎁",
+            "Очень рад, что наши судьбы пересеклись! ❤️",
+            " ",
+            "С любовью, Нуржигит 🫶🏻"
         ];
 
         function init() {
@@ -212,7 +216,6 @@
 
         function initGyro() {
             if (window.DeviceOrientationEvent) {
-                // Запрашиваем разрешение для iOS, если нужно
                 if (typeof DeviceOrientationEvent.requestPermission === 'function') {
                     DeviceOrientationEvent.requestPermission();
                 }
@@ -253,12 +256,12 @@
             const pContainer = document.getElementById('type-p-container');
             h2.innerHTML = ""; h2.style.opacity = "1";
             pContainer.innerHTML = "";
-            await typeEffect(h2, greetingTitle, 80);
+            await typeEffect(h2, greetingTitle, 60);
             for (let line of greetingLines) {
                 const p = document.createElement('p');
                 p.style.opacity = "1";
                 pContainer.appendChild(p);
-                await typeEffect(p, line, 40);
+                await typeEffect(p, line, 30);
             }
         }
 
